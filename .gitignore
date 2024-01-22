@@ -1,0 +1,10 @@
+.venv
+build
+dist
+/src/data
+*.dll
+*.exe
+*.log
+*.mo
+*.pot
+*.py[co]

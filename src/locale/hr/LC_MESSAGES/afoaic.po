@@ -1,0 +1,115 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-21 18:59+0100\n"
+"PO-Revision-Date: 2024-01-21 19:09+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: hr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.2\n"
+
+#: ..\src\core\sound.py:44
+msgid "No internet connection could be opened."
+msgstr "Nije bilo moguće otvoriti internetsku vezu."
+
+#: ..\src\core\sound.py:47
+msgid "Unable to play audio."
+msgstr "Nije moguće reproducirati zvuk."
+
+#: ..\src\gui\main.py:12
+msgid "AFOAIC"
+msgstr ""
+
+#: ..\src\gui\main.py:22
+msgid "New chat\tCtrl+N"
+msgstr "Novo čavrljanje\tCtrl+N"
+
+#: ..\src\gui\main.py:23
+msgid "Chat history...\tCtrl+H"
+msgstr "Povijest čavrljanja...\tCtrl+H"
+
+#: ..\src\gui\main.py:24
+msgid "Options...\tCtrl+Shift+O"
+msgstr "Opcije...\tCtrl+Shift+O"
+
+#: ..\src\gui\main.py:25
+msgid "Exit\tAlt+F4"
+msgstr "Izlaz\tAlt+F4"
+
+#: ..\src\gui\main.py:26
+msgid "&Chat"
+msgstr "&Čavrljanje"
+
+#: ..\src\gui\main.py:39
+msgid "&Message content"
+msgstr "&Sadržaj poruke"
+
+#: ..\src\gui\main.py:41
+msgid "&Conversation"
+msgstr "&Razgovor"
+
+#: ..\src\gui\main.py:43
+msgid "Enter your &message here."
+msgstr "Napišite svoju &poruku ovdje."
+
+#: ..\src\gui\main.py:93
+msgid "user:"
+msgstr "user:"
+
+#: ..\src\gui\main.py:94
+msgid "assistant:"
+msgstr "assistant:"
+
+#: ..\src\gui\main.py:109
+msgid ""
+"API call Error. Details:\n"
+"{e}"
+msgstr ""
+"Greška API poziva. Pojedinosti:\n"
+"{e}"
+
+#: ..\src\gui\main.py:109 ..\src\gui\main.py:141
+msgid "Error"
+msgstr "Pogreška"
+
+#: ..\src\gui\main.py:132
+msgid "Select saved chat to load."
+msgstr "Odaberite spremljeno čavrljanje koje želite učitati."
+
+#: ..\src\gui\main.py:132
+msgid "Chat History"
+msgstr "Povijest čavrljanja"
+
+#: ..\src\gui\main.py:141
+msgid "Error loading chat from history."
+msgstr "Pogreška pri učitavanju čavrljanja iz povijesti."
+
+#: ..\src\gui\main.py:144
+msgid "Chat history is empty."
+msgstr "Povijest čavrljanja je prazna."
+
+#: ..\src\gui\main.py:144
+msgid "Information"
+msgstr "Obavijest"
+
+#: ..\src\gui\dialogs\options.py:8
+msgid "Options"
+msgstr "Opcije"
+
+#: ..\src\gui\dialogs\options.py:17
+msgid "API &key:"
+msgstr "API &ključ:"
+
+#: ..\src\gui\dialogs\options.py:25
+msgid "&Model:"
+msgstr "&Model:"

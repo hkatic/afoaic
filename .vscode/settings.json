@@ -1,0 +1,12 @@
+{
+    "editor.accessibilitySupport": "on",
+    "flake8.args": [
+        "--config=flake8.ini"
+    ],
+    "flake8.importStrategy": "fromEnvironment",
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    "editor.insertSpaces": false,
+    "python.analysis.stubPath": "${workspaceFolder}/.vscode/typings",
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/scripts/python.exe"
+}
