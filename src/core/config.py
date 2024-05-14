@@ -8,7 +8,7 @@ from .paths import app_path, data_path
 CONFIG_FILE_NAME = f"{application.name}.ini"
 CONFIG_SPEC = StringIO("""[options]
 key=string(default="")
-model=string(default="gpt-4-1106-preview")
+model=string(default="gpt-4o")
 """)
 
 conf = None
