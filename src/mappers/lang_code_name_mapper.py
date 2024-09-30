@@ -1,4 +1,4 @@
-from typing import Dict, Union
+from typing import Dict, List, Union
 
 def map_language_code_name(input: str) -> Union[str, None]:
 	language_map: Dict[str, str] = {
@@ -72,6 +72,6 @@ def map_language_code_name(input: str) -> Union[str, None]:
 	else:
 		return None
 
-def get_language_names() -> list[str]:
+def get_language_names() -> List[str]:
 	return map_language_code_name("LIST_LANGUAGE_NAMES")
     
