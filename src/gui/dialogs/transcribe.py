@@ -60,6 +60,10 @@ class TranscribeAudioDialog(wx.Dialog):
 		dialog.Destroy()
 
 	def OnTranscribe(self, evt):
+		audio_file_path = self.audioFilePathEdit.GetValue()
+		if not os.path.exists(audio_file_path) and not os.path.isfile(audio_file_path):
+			wx.MessageBox(_("The specified audio file does not exist. Please check the file path."), _("Error"), wx.OK | wx.ICON_ERROR)
+			return
 		config.conf["transcribeAudio"]["fromLanguage"] = lang_code_name_mapper.map_language_code_name(self.languageChoice.GetStringSelection())
 		config.conf["transcribeAudio"]["audioFilePath"] = self.audioFilePathEdit.GetValue()
 		config.conf.write()
