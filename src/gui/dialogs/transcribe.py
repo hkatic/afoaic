@@ -1,5 +1,6 @@
 import wx
 from core import config
+from mappers import lang_code_name_mapper
 
 class TranscribeAudioDialog(wx.Dialog):
 
@@ -14,8 +15,8 @@ class TranscribeAudioDialog(wx.Dialog):
 		# Language selection controls
 		languageSizer = wx.BoxSizer(wx.HORIZONTAL)
 		self.languageLabel = wx.StaticText(self, label=_("Source &language:"))
-		self.languageChoice = wx.Choice(self, choices=[])
-		self.languageChoice.SetStringSelection(config.conf["transcribeAudio"]["fromLanguage"])
+		self.languageChoice = wx.Choice(self, choices=lang_code_name_mapper.get_language_names())
+		self.languageChoice.SetStringSelection(lang_code_name_mapper.map_language_code_name(config.conf["transcribeAudio"]["fromLanguage"]))
 		languageSizer.Add(self.languageLabel, 0, wx.ALL, 5)
 		languageSizer.Add(self.languageChoice, 1, wx.EXPAND | wx.ALL, 5)
 
@@ -38,7 +39,7 @@ class TranscribeAudioDialog(wx.Dialog):
 		self.languageChoice.SetFocus()
 
 	def OnOk(self, evt):
-		config.conf["transcribeAudio"]["fromLanguage"] = self.languageChoice.GetStringSelection()
+		config.conf["transcribeAudio"]["fromLanguage"] = lang_code_name_mapper.map_language_code_name(self.languageChoice.GetStringSelection())
 		config.conf["transcribeAudio"]["audioFilePath"] = self.audioFilePathEdit.GetValue()
 		config.conf.write()
 		self.Destroy()
