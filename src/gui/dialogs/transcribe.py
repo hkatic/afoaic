@@ -31,7 +31,6 @@ class TranscribeAudioDialog(wx.Dialog):
 		audioFilePathSizer = wx.BoxSizer(wx.HORIZONTAL)
 		self.audioFilePathLabel = wx.StaticText(self, label=_("Audio &file path:"))
 		self.audioFilePathEdit = wx.TextCtrl(self)
-		self.audioFilePathEdit.SetValue(config.conf["transcribeAudio"]["audioFilePath"])
 		self.browseButton = wx.Button(self, label=_("&Browse"))
 		self.browseButton.Bind(wx.EVT_BUTTON, self.OnBrowse)
 		audioFilePathSizer.Add(self.audioFilePathLabel, 0, wx.ALL, 5)
@@ -68,7 +67,6 @@ class TranscribeAudioDialog(wx.Dialog):
 			wx.MessageBox(_("The specified audio file does not exist. Please check the file path."), _("Error"), wx.OK | wx.ICON_ERROR)
 			return
 		config.conf["transcribeAudio"]["fromLanguage"] = lang_code_name_mapper.map_language_code_name(self.languageChoice.GetStringSelection())
-		config.conf["transcribeAudio"]["audioFilePath"] = self.audioFilePathEdit.GetValue()
 		config.conf.write()
 		self.progressBar.Show()
 		self.progressBar.SetValue(0)

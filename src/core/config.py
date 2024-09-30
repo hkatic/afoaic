@@ -12,7 +12,6 @@ model=string(default="gpt-4o")
 
 [transcribeAudio]
 fromLanguage=string(default="auto")
-audioFilePath=string(default="")
 """)
 
 conf = None
