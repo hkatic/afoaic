@@ -152,5 +152,11 @@ class MainFrame(wx.Frame):
 		dlg.ShowModal()
 
 	def OnTranscribeAudioMenuItem(self, evt):
+		msg_transcription = _("Audio transcription:")
 		dlg = transcribe.TranscribeAudioDialog(self)
 		dlg.ShowModal()
+		transcription = f"{msg_transcription}\n{dlg.GetResult()}"
+		self.message_list.Append(transcription)
+		self.focus_last_message()
+		self.message_content.SetValue(transcription)
+		self.message_content.SetFocus()

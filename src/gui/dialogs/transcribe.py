@@ -1,11 +1,15 @@
 import wx
+import os
+from api import gpt
 from core import config
 from mappers import lang_code_name_mapper
+import threading
 
 class TranscribeAudioDialog(wx.Dialog):
 
 	def __init__(self, parent, *args, **kwargs):
 		super().__init__(parent, id=wx.ID_ANY, title=_("Transcribe Audio"), pos=wx.DefaultPosition, size=wx.DefaultSize, style=wx.DEFAULT_DIALOG_STYLE, *args, **kwargs)
+		self.transcription_result = ""
 		self.initUI()
 		self.Centre(wx.BOTH)
 
@@ -25,24 +29,66 @@ class TranscribeAudioDialog(wx.Dialog):
 		self.audioFilePathLabel = wx.StaticText(self, label=_("Audio &file path:"))
 		self.audioFilePathEdit = wx.TextCtrl(self)
 		self.audioFilePathEdit.SetValue(config.conf["transcribeAudio"]["audioFilePath"])
+		self.browseButton = wx.Button(self, label=_("&Browse"))
+		self.browseButton.Bind(wx.EVT_BUTTON, self.OnBrowse)
 		audioFilePathSizer.Add(self.audioFilePathLabel, 0, wx.ALL, 5)
 		audioFilePathSizer.Add(self.audioFilePathEdit, 1, wx.EXPAND | wx.ALL, 5)
+		audioFilePathSizer.Add(self.browseButton, 0, wx.ALL, 5)
+
+		# Progress bar
+		self.progressBar = wx.Gauge(self, range=100, style=wx.GA_HORIZONTAL)
+		self.progressBar.Hide()
 
 		# Standard button sizer
-		buttonSizer = self.CreateButtonSizer(wx.OK | wx.CANCEL)
-		self.Bind(wx.EVT_BUTTON, self.OnOk, id=wx.ID_OK)
+		buttonSizer = self.CreateStdDialogButtonSizer(wx.OK | wx.CANCEL)
+		self.FindWindowById(wx.ID_OK).SetLabel(_("&Transcribe"))
+		self.Bind(wx.EVT_BUTTON, self.OnTranscribe, id=wx.ID_OK)
 		self.Bind(wx.EVT_BUTTON, self.OnCancel, id=wx.ID_CANCEL)
+
 		dialogSizer.Add(languageSizer, 0, wx.EXPAND | wx.ALL, 10)
 		dialogSizer.Add(audioFilePathSizer, 0, wx.EXPAND | wx.ALL, 10)
+		dialogSizer.Add(self.progressBar, 0, wx.EXPAND | wx.ALL, 10)
 		dialogSizer.Add(buttonSizer, 0, wx.ALIGN_CENTER | wx.ALL, 10)
 		self.SetSizer(dialogSizer)
 		self.languageChoice.SetFocus()
 
-	def OnOk(self, evt):
+	def OnBrowse(self, evt):
+		wildcard = "Audio files (*.mp3;*.mp4;*.mpeg;*.mpga;*.m4a;*.wav;*.webm)|*.mp3;*.mp4;*.mpeg;*.mpga;*.m4a;*.wav;*.webm"
+		dialog = wx.FileDialog(self, _("Choose an audio file"), wildcard=wildcard, style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
+		if dialog.ShowModal() == wx.ID_OK:
+			self.audioFilePathEdit.SetValue(dialog.GetPath())
+		dialog.Destroy()
+
+	def OnTranscribe(self, evt):
 		config.conf["transcribeAudio"]["fromLanguage"] = lang_code_name_mapper.map_language_code_name(self.languageChoice.GetStringSelection())
 		config.conf["transcribeAudio"]["audioFilePath"] = self.audioFilePathEdit.GetValue()
 		config.conf.write()
+		self.progressBar.Show()
+		self.progressBar.SetValue(0)
+		self.FindWindowById(wx.ID_OK).Disable()
+		self.FindWindowById(wx.ID_CANCEL).Enable()
+		threading.Thread(target=self.TranscribeAudio, daemon=True).start()
+
+	def TranscribeAudio(self):
+		for i in range(100):
+			wx.CallAfter(self.progressBar.SetValue, i + 1)
+		try:
+			self.transcription_result = gpt.transcribe_audio(self.audioFilePathEdit.GetValue())
+			wx.CallAfter(self.TranscriptionComplete)
+		except Exception as e:
+			wx.CallAfter(self.TranscriptionError, e)
+
+	def TranscriptionComplete(self):
 		self.Destroy()
+		wx.MessageBox(_("Transcription complete!"), _("Success"), wx.OK | wx.ICON_INFORMATION)
+
+	def TranscriptionError(self, e):
+		self.Destroy()
+		wx.MessageBox(_(f"API call Error. Details:\n{e}"), _("Error"))
 
 	def OnCancel(self, evt):
 		self.Destroy()
+
+	def GetResult(self):
+		return self.transcription_result
+        
