@@ -9,6 +9,10 @@ CONFIG_FILE_NAME = f"{application.name}.ini"
 CONFIG_SPEC = StringIO("""[options]
 key=string(default="")
 model=string(default="gpt-4o")
+
+[transcribeAudio]
+fromLanguage=string(default="auto")
+audioFilePath=string(default="")
 """)
 
 conf = None

@@ -4,7 +4,7 @@ import sys
 import threading
 import chat
 import sounds
-from .dialogs import options
+from .dialogs import options, transcribe
 
 class MainFrame(wx.Frame):
 
@@ -24,11 +24,15 @@ class MainFrame(wx.Frame):
 		options_menu_item = chat_menu.Append(wx.ID_ANY, _("Options...\tCtrl+Shift+O"))
 		chat_menu.Append(wx.ID_EXIT, _("Exit\tAlt+F4"))
 		menu_bar.Append(chat_menu, _("&Chat"))
+		tools_menu = wx.Menu()
+		transcribe_audio_menu_item = tools_menu.Append(wx.ID_ANY, _("&Transcribe audio...\tCtrl+T"))
+		menu_bar.Append(tools_menu, _("&Tools"))
 		self.SetMenuBar(menu_bar)
 		self.Bind(wx.EVT_MENU, self.OnNewChatMenuItem, new_chat_menu_item)
 		self.Bind(wx.EVT_MENU, self.OnChatHistoryMenuItem, chat_history_menu_item)
 		self.Bind(wx.EVT_MENU, self.OnOptionsMenuItem, options_menu_item)
 		self.Bind(wx.EVT_MENU, self.OnClose, id=wx.ID_EXIT)
+		self.Bind(wx.EVT_MENU, self.OnTranscribeAudioMenuItem, transcribe_audio_menu_item)
 
 	def InitUI(self):
 		self.Center()
@@ -145,4 +149,8 @@ class MainFrame(wx.Frame):
 
 	def OnOptionsMenuItem(self, evt):
 		dlg = options.OptionsDialog(self)
+		dlg.ShowModal()
+
+	def OnTranscribeAudioMenuItem(self, evt):
+		dlg = transcribe.TranscribeAudioDialog(self)
 		dlg.ShowModal()
