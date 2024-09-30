@@ -1,9 +1,11 @@
-import wx
 import os
+import threading
+import time
+import random
+import wx
 from api import gpt
 from core import config
 from mappers import lang_code_name_mapper
-import threading
 
 class TranscribeAudioDialog(wx.Dialog):
 
@@ -71,22 +73,40 @@ class TranscribeAudioDialog(wx.Dialog):
 		self.progressBar.SetValue(0)
 		self.FindWindowById(wx.ID_OK).Disable()
 		self.FindWindowById(wx.ID_CANCEL).Enable()
-		threading.Thread(target=self.TranscribeAudio, daemon=True).start()
+		self.transcription_thread = threading.Thread(target=self.TranscribeAudio, daemon=True)
+		self.transcription_thread.start()
+		self.progress_thread = threading.Thread(target=self.UpdateProgress, daemon=True)
+		self.progress_thread.start()
 
 	def TranscribeAudio(self):
-		for i in range(100):
-			wx.CallAfter(self.progressBar.SetValue, i + 1)
 		try:
 			self.transcription_result = gpt.transcribe_audio(self.audioFilePathEdit.GetValue())
 			wx.CallAfter(self.TranscriptionComplete)
 		except Exception as e:
 			wx.CallAfter(self.TranscriptionError, e)
 
+	def UpdateProgress(self):
+		progress = 0
+		while progress < 100 and self.transcription_thread.is_alive():
+			if progress < 90:
+				# Move quickly to 90%
+				progress += random.randint(1, 5)
+			else:
+				# Slow down as we approach 100%
+				progress += 0.1
+			progress = min(progress, 99)  # Ensure we don't exceed 99%
+			wx.CallAfter(self.progressBar.SetValue, int(progress))
+			time.sleep(0.1)  # Update every 100ms
+
 	def TranscriptionComplete(self):
+		wx.CallAfter(self.progressBar.SetValue, 100)
+		time.sleep(0.5)
 		self.Destroy()
 		wx.MessageBox(_("Transcription complete!"), _("Success"), wx.OK | wx.ICON_INFORMATION)
 
 	def TranscriptionError(self, e):
+		wx.CallAfter(self.progressBar.SetValue, 100)
+		time.sleep(0.5)
 		self.Destroy()
 		wx.MessageBox(_(f"API call Error. Details:\n{e}"), _("Error"))
 
