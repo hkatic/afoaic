@@ -37,6 +37,12 @@ def chats_path() -> str:
 		os.mkdir(data_path("chatlogs"))
 	return data_path("chatlogs")
 
+def transcriptions_path() -> str:
+	transcriptions_path = os.path.join(paths.documents_path(), application.name, "transcriptions")
+	if not os.path.exists(transcriptions_path):
+		os.makedirs(transcriptions_path)
+	return transcriptions_path
+
 def get_doc_file_path(fileName: str, localized: bool = True) -> Optional[str]:
 	import config
 	if not get_doc_file_path.rootPath:

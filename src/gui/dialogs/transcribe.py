@@ -5,6 +5,7 @@ import random
 import wx
 from api import gpt
 from core import config
+from core.paths import transcriptions_path
 from mappers import lang_code_name_mapper
 
 class TranscribeAudioDialog(wx.Dialog):
@@ -81,9 +82,18 @@ class TranscribeAudioDialog(wx.Dialog):
 	def TranscribeAudio(self):
 		try:
 			self.transcription_result = gpt.transcribe_audio(self.audioFilePathEdit.GetValue())
+			self.SaveTranscriptionToFile(self.transcription_result)
 			wx.CallAfter(self.TranscriptionComplete)
 		except Exception as e:
 			wx.CallAfter(self.TranscriptionError, e)
+
+	def SaveTranscriptionToFile(self, transcription_text):
+		source_dir, source_filename = os.path.split(self.audioFilePathEdit.GetValue())
+		output_filename = f"{os.path.splitext(source_filename)[0]}.txt"
+		file_path = os.path.join(transcriptions_path(), output_filename)
+		with open(file_path, 'w', encoding='utf-8') as f:
+			f.write(transcription_text)
+		return file_path
 
 	def UpdateProgress(self):
 		progress = 0
@@ -115,4 +125,3 @@ class TranscribeAudioDialog(wx.Dialog):
 
 	def GetResult(self):
 		return self.transcription_result
-        
