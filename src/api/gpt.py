@@ -17,7 +17,7 @@ def transcribe_audio(audio_file_path):
 		transcript = client.audio.transcriptions.create(
 			model = "whisper-1",
 			file = audio_file,
-			response_format="text",
+			response_format=config.conf["transcribeAudio"]["responseFormat"],
 			language=config.conf["transcribeAudio"]["fromLanguage"]
 		)
 	return transcript
@@ -28,6 +28,6 @@ def translate_audio(audio_file_path):
 		translation = client.audio.translations.create(
 			model = "whisper-1",
 			file = audio_file,
-			response_format="text"
+			response_format=config.conf["transcribeAudio"]["responseFormat"]
 		)
 	return translation

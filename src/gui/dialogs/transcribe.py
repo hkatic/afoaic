@@ -6,7 +6,7 @@ import wx
 from api import gpt
 from core import config
 from core.paths import transcriptions_path
-from mappers import lang_code_name_mapper
+from mappers import lang_code_name_mapper, transcription_output_format_mapper
 
 class TranscribeAudioDialog(wx.Dialog):
 
@@ -37,6 +37,14 @@ class TranscribeAudioDialog(wx.Dialog):
 		audioFilePathSizer.Add(self.audioFilePathEdit, 1, wx.EXPAND | wx.ALL, 5)
 		audioFilePathSizer.Add(self.browseButton, 0, wx.ALL, 5)
 
+		# Output format selection controls
+		outputFormatSizer = wx.BoxSizer(wx.HORIZONTAL)
+		self.outputFormatLabel = wx.StaticText(self, label=_("Output &format:"))
+		self.outputFormatChoice = wx.Choice(self, choices=transcription_output_format_mapper.get_output_format_names())
+		self.outputFormatChoice.SetStringSelection(transcription_output_format_mapper.map_output_format_code_name(config.conf["transcribeAudio"]["responseFormat"]))
+		outputFormatSizer.Add(self.outputFormatLabel, 0, wx.ALL, 5)
+		outputFormatSizer.Add(self.outputFormatChoice, 1, wx.EXPAND | wx.ALL, 5)
+
 		# Options
 		self.translateCheckbox = wx.CheckBox(self, label=_("Translate to English"))
 		self.translateCheckbox.SetValue(config.conf["transcribeAudio"]["translateToEnglish"])
@@ -53,6 +61,8 @@ class TranscribeAudioDialog(wx.Dialog):
 
 		dialogSizer.Add(languageSizer, 0, wx.EXPAND | wx.ALL, 10)
 		dialogSizer.Add(audioFilePathSizer, 0, wx.EXPAND | wx.ALL, 10)
+		dialogSizer.Add(outputFormatSizer, 0, wx.EXPAND | wx.ALL, 10)
+		dialogSizer.Add(self.translateCheckbox, 0, wx.EXPAND | wx.ALL, 10)
 		dialogSizer.Add(self.progressBar, 0, wx.EXPAND | wx.ALL, 10)
 		dialogSizer.Add(buttonSizer, 0, wx.ALIGN_CENTER | wx.ALL, 10)
 		self.SetSizer(dialogSizer)
@@ -71,6 +81,7 @@ class TranscribeAudioDialog(wx.Dialog):
 			wx.MessageBox(_("The specified audio file does not exist. Please check the file path."), _("Error"), wx.OK | wx.ICON_ERROR)
 			return
 		config.conf["transcribeAudio"]["fromLanguage"] = lang_code_name_mapper.map_language_code_name(self.languageChoice.GetStringSelection())
+		config.conf["transcribeAudio"]["responseFormat"] = transcription_output_format_mapper.map_output_format_code_name(self.outputFormatChoice.GetStringSelection())
 		config.conf["transcribeAudio"]["translateToEnglish"] = self.translateCheckbox.GetValue()
 		config.conf.write()
 		self.progressBar.Show()
@@ -92,8 +103,17 @@ class TranscribeAudioDialog(wx.Dialog):
 			wx.CallAfter(self.TranscriptionError, e)
 
 	def SaveTranscriptionToFile(self, transcription_text):
+		extension = ""
+		if config.conf["transcribeAudio"]["responseFormat"] == "text":
+			extension = ".txt"
+		elif config.conf["transcribeAudio"]["responseFormat"] == "srt":
+			extension = ".srt"
+		elif config.conf["transcribeAudio"]["responseFormat"] == "vtt":
+			extension = ".vtt"
+		elif config.conf["transcribeAudio"]["responseFormat"] == "verbose_json":
+			extension = ".json"
 		source_dir, source_filename = os.path.split(self.audioFilePathEdit.GetValue())
-		output_filename = f"{os.path.splitext(source_filename)[0]}.txt"
+		output_filename = f"{os.path.splitext(source_filename)[0]}{extension}"
 		file_path = os.path.join(transcriptions_path(), output_filename)
 		with open(file_path, 'w', encoding='utf-8') as f:
 			f.write(transcription_text)
