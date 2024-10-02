@@ -12,6 +12,7 @@ model=string(default="gpt-4o")
 
 [transcribeAudio]
 fromLanguage=string(default="auto")
+translateToEnglish=boolean(default=False)
 """)
 
 conf = None

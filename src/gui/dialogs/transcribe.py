@@ -37,6 +37,10 @@ class TranscribeAudioDialog(wx.Dialog):
 		audioFilePathSizer.Add(self.audioFilePathEdit, 1, wx.EXPAND | wx.ALL, 5)
 		audioFilePathSizer.Add(self.browseButton, 0, wx.ALL, 5)
 
+		# Options
+		self.translateCheckbox = wx.CheckBox(self, label=_("Translate to English"))
+		self.translateCheckbox.SetValue(config.conf["transcribeAudio"]["translateToEnglish"])
+
 		# Progress bar
 		self.progressBar = wx.Gauge(self, range=100, style=wx.GA_HORIZONTAL)
 		self.progressBar.Hide()
@@ -67,6 +71,7 @@ class TranscribeAudioDialog(wx.Dialog):
 			wx.MessageBox(_("The specified audio file does not exist. Please check the file path."), _("Error"), wx.OK | wx.ICON_ERROR)
 			return
 		config.conf["transcribeAudio"]["fromLanguage"] = lang_code_name_mapper.map_language_code_name(self.languageChoice.GetStringSelection())
+		config.conf["transcribeAudio"]["translateToEnglish"] = self.translateCheckbox.GetValue()
 		config.conf.write()
 		self.progressBar.Show()
 		self.progressBar.SetValue(0)
@@ -79,7 +84,8 @@ class TranscribeAudioDialog(wx.Dialog):
 
 	def TranscribeAudio(self):
 		try:
-			self.transcription_result = gpt.transcribe_audio(self.audioFilePathEdit.GetValue())
+			if self.translateCheckbox.GetValue(): self.transcription_result = gpt.translate_audio(self.audioFilePathEdit.GetValue())
+			else: self.transcription_result = gpt.transcribe_audio(self.audioFilePathEdit.GetValue())
 			self.SaveTranscriptionToFile(self.transcription_result)
 			wx.CallAfter(self.TranscriptionComplete)
 		except Exception as e:
