@@ -94,13 +94,17 @@ class TranscribeAudioDialog(wx.Dialog):
 		self.progress_thread.start()
 
 	def TranscribeAudio(self):
-		try:
-			if self.translateCheckbox.GetValue(): self.transcription_result = gpt.translate_audio(self.audioFilePathEdit.GetValue())
-			else: self.transcription_result = gpt.transcribe_audio(self.audioFilePathEdit.GetValue())
-			self.SaveTranscriptionToFile(self.transcription_result)
-			wx.CallAfter(self.TranscriptionComplete)
-		except Exception as e:
-			wx.CallAfter(self.TranscriptionError, e)
+		for attempt in range(1000):
+			try:
+				if self.translateCheckbox.GetValue(): self.transcription_result = gpt.translate_audio(self.audioFilePathEdit.GetValue())
+				else: self.transcription_result = gpt.transcribe_audio(self.audioFilePathEdit.GetValue())
+				self.SaveTranscriptionToFile(self.transcription_result)
+				wx.CallAfter(self.TranscriptionComplete)
+				break
+			except Exception as e:
+				time.sleep(5)
+				if attempt == 999:
+					wx.CallAfter(self.TranscriptionError, e)
 
 	def SaveTranscriptionToFile(self, transcription_text):
 		extension = ""
