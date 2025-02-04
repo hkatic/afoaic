@@ -120,7 +120,7 @@ class TranscribeAudioDialog(wx.Dialog):
 		output_filename = f"{os.path.splitext(source_filename)[0]}{extension}"
 		file_path = os.path.join(transcriptions_path(), output_filename)
 		with open(file_path, 'w', encoding='utf-8') as f:
-			f.write(transcription_text)
+			f.write(transcription_text.replace(". ", ".\n").replace("? ", "?\n").replace("! ", "!\n").replace(": ", ":\n"))
 		return file_path
 
 	def UpdateProgress(self):
